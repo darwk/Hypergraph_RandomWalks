@@ -1,0 +1,7 @@
+/home/darwin/Desktop/domains/domains/Database_Data mining_Information retrieval.txt
+/home/darwin/Desktop/domains/domains/High-Performance Computing.txt
+/home/darwin/Desktop/domains/domains/Human computer interaction_Ubiquitous computing.txt
+/home/darwin/Desktop/domains/domains/Information security.txt
+/home/darwin/Desktop/domains/domains/Interdisciplinary Studies.txt
+/home/darwin/Desktop/domains/domains/Software engineering.txt
+/home/darwin/Desktop/domains/domains/Theoretical computer science.txt
