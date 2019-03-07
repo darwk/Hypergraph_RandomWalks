@@ -2,30 +2,35 @@ import numpy as np
 import random
 
 
-def get_random_walk(adjacency_matrix, path_length, start, index_map, nodes):
+def get_random_walk(adj_matrix, walk_length, start, index_map, inv_index_map):
 
     path = []
-    path.append(str(start))
 
-    while len(path) < path_length:
+    path.append(start)
 
-        adjmatrix_index = index_map[int(path[-1])]
-        adj = adjacency_matrix[adjmatrix_index]
+    while len(path) < walk_length:
+
+        adjmatrix_index = index_map[path[-1]]
+        adj = adj_matrix[adjmatrix_index]
 
         next_node = np.random.choice(len(adj), replace=True, p=adj/np.sum(adj))
-        path.append(str(nodes[next_node]))
+        path.append(inv_index_map[next_node])
 
     return path
 
 
-def build_deepwalk_corpus(nodes, adjacency_matrix, num_paths, path_length, index_map):
+def build_deepwalk_corpus(nodes, adj_matrix, index_map, num_walks, walk_length):
 
     walks = []
     rand = random.Random(0)
 
-    for count in range(num_paths):
+    inv_index_map = {}
+    for index in index_map:
+        inv_index_map[index_map[index]] = index
+
+    for count in range(num_walks):
         rand.shuffle(nodes)
         for node in nodes:
-            walks.append(get_random_walk(adjacency_matrix, path_length, node, index_map, nodes))
+            walks.append(get_random_walk(adj_matrix, walk_length, node, index_map, inv_index_map))
 
     return walks

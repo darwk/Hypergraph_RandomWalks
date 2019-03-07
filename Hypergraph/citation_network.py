@@ -1,6 +1,3 @@
-from utils import write_hyperedges, write_map_to_disk
-
-
 def get_file_paths(file):
 
     file_handle = open(file, 'r')
@@ -40,13 +37,13 @@ def read_aminer_data_files(files_paths):
             line_type = line[1]
 
             if line_type == 'i':
-                index = int(line[6:-1])
+                index = line[6:-1]
                 paperid_classid[index] = curr_classid
                 references = set([])
 
             elif line_type == '%':
                 if line[2] != ' ':
-                    ref_index = int(line[2:-1])
+                    ref_index = line[2:-1]
                     references.add(ref_index)
 
             elif line_type == '!':
@@ -80,21 +77,6 @@ def validate_hyperedges(nodes, referenced_nodes, hyperedges):
     return valid_nodes, hyperedges
 
 
-def create_adjacencylist(hyperedges):
-    adjlist = {}
-
-    for hyperedge in hyperedges:
-        for node1 in hyperedge:
-            if node1 not in adjlist:
-                adjlist[node1] = []
-
-            for node2 in hyperedge:
-                if node1 != node2:
-                    adjlist[node1].append(node2)
-
-    return adjlist
-
-
 def get_citation_network(files_paths):
     
     paperid_classid, classid_classname, reference_ids, references_list = read_aminer_data_files(files_paths)
@@ -103,8 +85,10 @@ def get_citation_network(files_paths):
 
     paperid_classid = dict((node, paperid_classid[node]) for node in nodes)
 
-    classid_count = {}
+    print("Total number of nodes :", len(nodes))
+    print("hyperedges :", len(hyperedges))
 
+    classid_count = {}
     for paperid in paperid_classid:
         classid = paperid_classid[paperid]
         if classid not in classid_count:
@@ -115,11 +99,4 @@ def get_citation_network(files_paths):
     for classid in classid_count:
         print("class - " + str(classid) + ", count - " + str(classid_count[classid]))
 
-    print("nodes :", len(nodes))
-    print("hyperedges :", len(hyperedges))
-    write_map_to_disk("OutputFiles/paperid_classid.txt", paperid_classid)
-    write_map_to_disk("OutputFiles/classid_classname.txt", classid_classname)
-    write_hyperedges("OutputFiles/hyperedges.txt", hyperedges)
-#    write_adjlist("OutputFiles/adjlist.txt", adjlist)
-
-    return nodes, hyperedges, paperid_classid, classid_classname
+    return list(nodes), hyperedges, paperid_classid, classid_classname
