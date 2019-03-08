@@ -11,13 +11,17 @@ from sklearn.model_selection import train_test_split
 
 
 def get_representations(nodes, adj_matrix, index_map, num_walks, walk_length, num_dimensions, window_size):
+    print("Building random walk corpus . . .")
     random_walks = build_deepwalk_corpus(nodes, adj_matrix, index_map, num_walks, walk_length)
+
+    print("Getting representations . . .")
     model = Word2Vec(random_walks, size=num_dimensions, window=window_size, min_count=0, sg=1, hs=1, workers=1)
     return model
 
 
 def evaluate(nodes, target_classes, hypergraph_model, graph_model, num_neighbors):
 
+    print("Split data into training and test data")
     nodes_train, nodes_test, target_classes_train, target_classes_test = train_test_split(nodes, target_classes, random_state=1234)
 
     hypergraph_train = []
@@ -40,6 +44,7 @@ def evaluate(nodes, target_classes, hypergraph_model, graph_model, num_neighbors
     hypergraph_test = np.array(hypergraph_test)
     graph_test = np.array(graph_test)
 
+    print("Successfully split data into training and test data")
     #svm_classifier(hypergraph_train, hypergraph_test, classes_train, classes_test, C, gamma)
     #svm_classifier(graph_train, graph_test, classes_train, classes_test, C, gamma)
 
@@ -66,8 +71,12 @@ def main():
     window_size_list = args.window_size
     num_neighbors_list = args.num_neighbors
 
+    print("Getting network . . .")
     nodes, hyperedges, paperid_classid, classid_classname = get_citation_network("filePaths.txt")
+
+    print("Getting adjacency matrices . . .")
     hypergraph_adj_matrix, graph_adj_matrix, index_map = get_adj_matrices(nodes, hyperedges)
+
 
     target_classes = []
     for node in nodes:
@@ -79,10 +88,15 @@ def main():
                 for window_size in window_size_list:
                     hypergraph_model = get_representations(nodes, hypergraph_adj_matrix, index_map,
                                                            num_walks, walk_length, num_dimensions, window_size)
+
+                    print("Successfully got hypergraph model")
+
                     graph_model = get_representations(nodes, graph_adj_matrix, index_map,
                                                       num_walks, walk_length, num_dimensions, window_size)
+                    print("Successfully got graph model")
 
                     for num_neighbors in num_neighbors_list:
+                        print("Evaluating models with num_neighbors - " + str(num_neighbors))
                         hypergraph_accuracy, graph_accuracy = evaluate(nodes, target_classes, hypergraph_model,
                                                                        graph_model, num_neighbors)
 
