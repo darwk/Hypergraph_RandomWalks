@@ -86,7 +86,7 @@ def get_citation_network(files_paths):
     paperid_classid = dict((node, paperid_classid[node]) for node in nodes)
 
     print("Total number of nodes :", len(nodes))
-    print("hyperedges :", len(hyperedges))
+    print("Total number of hyperedges :", len(hyperedges))
 
     classid_count = {}
     for paperid in paperid_classid:

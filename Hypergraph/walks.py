@@ -5,15 +5,14 @@ import random
 def get_random_walk(adj_matrix, walk_length, start, index_map, inv_index_map):
 
     path = []
-
     path.append(start)
 
     while len(path) < walk_length:
 
         adjmatrix_index = index_map[path[-1]]
-        adj = adj_matrix[adjmatrix_index]
+        adj = adj_matrix[adjmatrix_index, :].tolil()
 
-        next_node = np.random.choice(len(adj), replace=True, p=adj/np.sum(adj))
+        next_node = np.random.choice(adj.rows[0], replace=True, p=adj.data[0]/np.sum(adj.data[0]))
         path.append(inv_index_map[next_node])
 
     return path
