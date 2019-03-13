@@ -17,7 +17,7 @@ def get_representations(nodes, adj_matrix, index_map, num_walks, walk_length, nu
     random_walks = build_deepwalk_corpus(nodes, adj_matrix, index_map, num_walks, walk_length)
 
     print("Getting representations")
-    model = Word2Vec(random_walks, size=num_dimensions, window=window_size, min_count=0, sg=1, hs=1, workers=1)
+    model = Word2Vec(random_walks, size=num_dimensions, window=window_size, min_count=0, sg=1, hs=1)
     return model
 
 
