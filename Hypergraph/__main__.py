@@ -48,18 +48,18 @@ def evaluate(nodes, target_classes, hypergraph_model, graph_model, svm_C, svm_ga
 
     print("Successfully split data into training and test data")
 
-    svm_hypergraph_accuracy, svm_hypergraph_conf_matrix = svm_classifier(hypergraph_train, hypergraph_test, target_classes_train,
-                                                                         target_classes_test, svm_C, svm_gamma)
-    svm_graph_accuracy, svm_graph_conf_matrix = svm_classifier(graph_train, graph_test, target_classes_train,
-                                                               target_classes_test, svm_C, svm_gamma)
+    svm_hypergraph_accuracy, svm_hypergraph_conf_matrix, svm_hypergraph_micro_f1, svm_hypergraph_macro_f1, svm_hypergraph_weighted_f1 \
+        = svm_classifier(hypergraph_train, hypergraph_test, target_classes_train, target_classes_test, svm_C, svm_gamma)
+    svm_graph_accuracy, svm_graph_conf_matrix, svm_graph_micro_f1, svm_graph_macro_f1, svm_graph_weighted_f1 \
+        = svm_classifier(graph_train, graph_test, target_classes_train, target_classes_test, svm_C, svm_gamma)
 
     write_matrix_to_disk(output_folder + "/svm_hypergraph_conf_matrix_" + str(svm_C) + "_" + str(svm_gamma) + ".csv", svm_hypergraph_conf_matrix, "%i")
     write_matrix_to_disk(output_folder + "/svm_graph_conf_matrix_" + str(svm_C) + "_" + str(svm_gamma) + ".csv", svm_graph_conf_matrix, "%i")
 
-    knn_hypergraph_accuracy, knn_hypergraph_conf_matrix = knn_classifier(hypergraph_train, hypergraph_test,
-                                                                 target_classes_train, target_classes_test, knn_num_neighbors)
-    knn_graph_accuracy, knn_graph_conf_matrix = knn_classifier(graph_train, graph_test, target_classes_train,
-                                                       target_classes_test, knn_num_neighbors)
+    knn_hypergraph_accuracy, knn_hypergraph_conf_matrix, knn_hypergraph_micro_f1, knn_hypergraph_macro_f1, knn_hypergraph_weighted_f1 \
+        = knn_classifier(hypergraph_train, hypergraph_test, target_classes_train, target_classes_test, knn_num_neighbors)
+    knn_graph_accuracy, knn_graph_conf_matrix, knn_graph_micro_f1, knn_graph_macro_f1, knn_graph_weighted_f1 = \
+        knn_classifier(graph_train, graph_test, target_classes_train, target_classes_test, knn_num_neighbors)
 
     write_matrix_to_disk(output_folder + "/knn_hypergraph_conf_matrix_" + str(knn_num_neighbors) + ".csv", knn_hypergraph_conf_matrix, "%i")
     write_matrix_to_disk(output_folder + "/knn_graph_conf_matrix_" + str(knn_num_neighbors) + ".csv", knn_graph_conf_matrix, "%i")
