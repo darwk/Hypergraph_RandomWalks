@@ -219,7 +219,6 @@ def svm_param_selection():
 
     print("Searching hypergraph best parameters")
     hypergraph_grid_search = GridSearchCV(SVC(), param_grid)
-    print("Here")
     hypergraph_grid_search.fit(hypergraph_train, target_classes_train)
 
     hypergraph_best_params = hypergraph_grid_search.best_params_
@@ -234,7 +233,6 @@ def svm_param_selection():
 
     print("Searching graph best parameters")
     graph_grid_search = GridSearchCV(SVC(), param_grid, cv=10)
-    print("Here")
     graph_grid_search.fit(graph_train, target_classes_train)
 
     graph_best_params = graph_grid_search.best_params_

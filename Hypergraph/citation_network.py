@@ -1,3 +1,6 @@
+import networkx as nx
+
+
 def get_file_paths(file):
 
     file_handle = open(file, 'r')
@@ -77,16 +80,43 @@ def validate_hyperedges(nodes, referenced_nodes, hyperedges):
     return valid_nodes, hyperedges
 
 
-def get_citation_network(files_paths):
+def get_largest_cc(nodes, hyperedges):
+    G = nx.Graph()
+    G.add_nodes_from(nodes)
+
+    for hyperedge in hyperedges:
+        for i in range(len(hyperedge)):
+            for j in range(i + 1, len(hyperedge)):
+                G.add_edge(hyperedge[i], hyperedge[j])
+
+    largest_cc = max(nx.connected_component_subgraphs(G), key=len)
+
+    while i < len(hyperedges):
+        hyperedge = hyperedges[i]
+        temp = hyperedge & largest_cc.nodes()
+
+        if len(temp) > 1:
+            hyperedges[i] = list(temp)
+            i += 1
+        else:
+            hyperedges.remove(hyperedge)
+
+    return largest_cc.nodes(), hyperedges
+
+
+def get_citation_network(files_paths, use_cc):
     
     paperid_classid, classid_classname, reference_ids, references_list = read_aminer_data_files(files_paths)
 
     nodes, hyperedges = validate_hyperedges(paperid_classid.keys(), reference_ids, references_list)
 
-    paperid_classid = dict((node, paperid_classid[node]) for node in nodes)
+    if use_cc:
+        nodes, hyperedges = get_largest_cc(nodes, hyperedges)
 
-    print("Total number of nodes :", len(nodes))
-    print("Total number of hyperedges :", len(hyperedges))
+    print("Total number of nodes - " + str(len(nodes)))
+    print("Total number of hyperedges - " + str(len(hyperedges)))
+
+    paperid_classid = dict((node, paperid_classid[node]) for node in nodes)
 
     classid_count = {}
     for paperid in paperid_classid:

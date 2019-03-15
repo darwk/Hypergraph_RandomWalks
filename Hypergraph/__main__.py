@@ -73,6 +73,7 @@ def main():
     parser.add_argument("--walk_length", nargs='+', type=int, help="length of the walk")
     parser.add_argument("--num_dimensions", nargs='+', type=int, help="number of dimensions")
     parser.add_argument("--window_size", nargs='+', type=int, help="window size")
+    parser.add_argument("--use_cc", type=bool, help="whether to use connected component or not")
     parser.add_argument("--output", type=str, help="output folder path")
 
     args = parser.parse_args()
@@ -80,10 +81,11 @@ def main():
     walk_length_list = args.walk_length
     num_dimensions_list = args.num_dimensions
     window_size_list = args.window_size
+    use_cc = args.use_cc
     output_folder = args.output
 
     print("Getting network ")
-    nodes, hyperedges, paperid_classid, classid_classname = get_citation_network("filePaths.txt")
+    nodes, hyperedges, paperid_classid, classid_classname = get_citation_network("filePaths.txt", use_cc)
 
     hypergraph_adj_matrix, graph_adj_matrix, index_map = get_adj_matrices(nodes, hyperedges)
 
