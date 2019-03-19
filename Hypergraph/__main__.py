@@ -24,7 +24,7 @@ def get_representations(nodes, adj_matrix, index_map, num_walks, walk_length, nu
 def evaluate(nodes, target_classes, hypergraph_model, graph_model, svm_C, svm_gamma, knn_num_neighbors, output_folder):
 
     print("Split data into training and test data")
-    nodes_train, nodes_test, target_classes_train, target_classes_test = train_test_split(nodes, target_classes, random_state=1234)
+    nodes_train, nodes_test, target_classes_train, target_classes_test = train_test_split(nodes, target_classes, stratify=target_classes)
 
     hypergraph_train = []
     graph_train = []

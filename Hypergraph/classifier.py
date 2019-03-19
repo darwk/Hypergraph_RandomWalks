@@ -60,7 +60,7 @@ def classifier():
     graph_model_file = args.graph_model_file
     output_folder = args.output
 
-    nodes, hyperedges, paperid_classid, classid_classname = get_citation_network("filePaths.txt")
+    nodes, hyperedges, paperid_classid, classid_classname = get_citation_network("filePaths.txt", True)
 
     print("Loading models")
     hypergraph_model = KeyedVectors.load_word2vec_format(hypergraph_model_file)
@@ -76,7 +76,7 @@ def classifier():
             target_classes.append(paperid_classid[node])
 
         print("Split data into training and test data with test_size - " + str(test_size))
-        nodes_train, nodes_test, target_classes_train, target_classes_test = train_test_split(nodes, target_classes, random_state=1234, test_size=test_size)
+        nodes_train, nodes_test, target_classes_train, target_classes_test = train_test_split(nodes, target_classes, test_size=test_size, stratify=target_classes)
 
         hypergraph_train = []
         graph_train = []
@@ -178,7 +178,7 @@ def svm_param_selection():
     graph_model_file = args.graph_model_file
     output_folder = args.output
 
-    nodes, hyperedges, paperid_classid, classid_classname = get_citation_network("filePaths.txt")
+    nodes, hyperedges, paperid_classid, classid_classname = get_citation_network("filePaths.txt", True)
 
     print("Loading models")
     hypergraph_model = KeyedVectors.load_word2vec_format(hypergraph_model_file)
@@ -190,8 +190,7 @@ def svm_param_selection():
         target_classes.append(paperid_classid[node])
 
     print("Split data into training and test data with test_size")
-    nodes_train, nodes_test, target_classes_train, target_classes_test = train_test_split(nodes, target_classes,
-                                                                                          random_state=1234)
+    nodes_train, nodes_test, target_classes_train, target_classes_test = train_test_split(nodes, target_classes)
 
     hypergraph_train = []
     graph_train = []
