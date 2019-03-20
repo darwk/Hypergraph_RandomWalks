@@ -191,7 +191,7 @@ def svm_param_selection():
     for node in nodes:
         target_classes.append(paperid_classid[node])
 
-    print("Split data into training and test data with test_size")
+    print("Split data into training and test data with test_size - " + str(test_size))
     nodes_train, nodes_test, target_classes_train, target_classes_test = train_test_split(nodes, target_classes, test_size=test_size)
 
     hypergraph_train = []
@@ -249,9 +249,9 @@ def svm_param_selection():
     csvfile = open(output_folder + "/Results_svm_grid.csv", "a")
     csvwriter = csv.writer(csvfile)
 
-    row1 = ["hypergraph", "svm", str(hypergraph_best_params["C"]), str(hypergraph_best_params["gamma"]),
+    row1 = ["hypergraph", "svm",  str(test_size), str(hypergraph_best_params["C"]), str(hypergraph_best_params["gamma"]),
             str(hypergraph_micro_f1), str(hypergraph_macro_f1), str(hypergraph_weighted_f1)]
-    row2 = ["graph", "svm", str(graph_best_params["C"]), str(graph_best_params["gamma"]),
+    row2 = ["graph", "svm", str(test_size), str(graph_best_params["C"]), str(graph_best_params["gamma"]),
             str(graph_micro_f1), str(graph_macro_f1), str(graph_weighted_f1)]
 
     csvwriter.writerow(row1)
@@ -260,13 +260,14 @@ def svm_param_selection():
     csvfile.close()
 
     write_matrix_to_disk(
-        output_folder + "/svm_hypergraph_conf_matrix_" + str(hypergraph_best_params["C"]) + "_" + str(hypergraph_best_params["gamma"]) +
+        output_folder + "/svm_hypergraph_conf_matrix_" + str(test_size) + "_" + str(hypergraph_best_params["C"]) + "_" + str(hypergraph_best_params["gamma"]) +
         ".csv", hypergraph_conf_matrix, "%i")
     write_matrix_to_disk(
-        output_folder + "/svm_graph_conf_matrix_" + str(graph_best_params["C"]) + "_" + str(graph_best_params["gamma"]) + ".csv",
+        output_folder + "/svm_graph_conf_matrix_" + str(test_size) + "_" + str(graph_best_params["C"]) + "_" + str(graph_best_params["gamma"]) + ".csv",
         graph_conf_matrix, "%i")
 
     print("Completed")
+
 
 if __name__ == "__main__":
   sys.exit(svm_param_selection())
