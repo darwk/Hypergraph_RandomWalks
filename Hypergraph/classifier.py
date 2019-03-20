@@ -165,6 +165,7 @@ def classifier():
 def svm_param_selection():
 
     parser = argparse.ArgumentParser()
+    parser.add_argument("--test_size", type=float, help="Proportion of data set to be split into train and test sets")
     parser.add_argument("--C", nargs='+', type=float, help="SVM's C parameter")
     parser.add_argument("--gamma", nargs='+', type=float, help="SVM's gamma parameter")
     parser.add_argument("--hypergraph_model_file", type=str, help="hypergraph file model path")
@@ -172,6 +173,7 @@ def svm_param_selection():
     parser.add_argument("--output", type=str, help="output folder path")
 
     args = parser.parse_args()
+    test_size = args.test_size
     C_list = args.C
     gamma_list = args.gamma
     hypergraph_model_file = args.hypergraph_model_file
@@ -190,7 +192,7 @@ def svm_param_selection():
         target_classes.append(paperid_classid[node])
 
     print("Split data into training and test data with test_size")
-    nodes_train, nodes_test, target_classes_train, target_classes_test = train_test_split(nodes, target_classes)
+    nodes_train, nodes_test, target_classes_train, target_classes_test = train_test_split(nodes, target_classes, test_size=test_size)
 
     hypergraph_train = []
     graph_train = []
