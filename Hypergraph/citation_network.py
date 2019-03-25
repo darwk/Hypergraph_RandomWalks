@@ -12,7 +12,7 @@ def get_file_paths(file):
     return file_list
 
 
-def read_aminer_data_files(files_paths):
+def read_aminer_data_files():
 
     # Set to store all referenced paper ids
     reference_ids = set([])
@@ -28,7 +28,7 @@ def read_aminer_data_files(files_paths):
 
     curr_classid = 1
 
-    file_list = get_file_paths(files_paths)
+    file_list = get_file_paths("filePaths.txt")
     for file in file_list:
 
         classid_classname[curr_classid] = file
@@ -55,6 +55,130 @@ def read_aminer_data_files(files_paths):
                     reference_ids.update(references)
 
         curr_classid += 1
+
+    return paperid_classid, classid_classname, reference_ids, references_list
+
+
+def read_citseer_data_files():
+
+    # Set to store all referenced paper ids
+    reference_ids = set([])
+
+    # List to store referenced paper ids (dictionary storing hyperedges)
+    references_list = []
+
+    # Dictionary to store paper id to class id mapping
+    paperid_classid = {}
+
+    # Dictionary to store class id to class name mapping
+    classid_classname = {}
+
+    classname_classid = {}
+
+    cites_file_handle = open("/home/darwin/datasets/Citeseer/citeseer/citeseer.cites")
+
+    citations = {}
+    paperids = set([])
+
+    for line in cites_file_handle.readlines():
+        temp = line.split("\n")
+        link = temp[0].split("\t")
+
+        if link[1] not in citations:
+            citations[link[1]] = set([])
+            paperids.add(link[1])
+
+        if link[0] != link[1]:
+            citations[link[1]].add(link[0])
+            reference_ids.add(link[0])
+
+    content_file_handle = open("/home/darwin/datasets/Citeseer/citeseer/citeseer.content")
+
+    for line in content_file_handle.readlines():
+        temp = line.split("\n")
+        words = temp[0].split("\t")
+        paperid = words[0]
+        classname = words[-1]
+
+        if classname not in classname_classid:
+            classid = len(classname_classid)
+            classname_classid[classname] = classid
+            classid_classname[classid] = classname
+
+        classid = classname_classid[classname]
+
+        if paperid in paperids:
+            if paperid not in paperid_classid:
+                paperid_classid[paperid] = classid
+            else:
+                if paperid_classid[paperid] != classid:
+                    print("Error - same paper id belongs to two different classes")
+
+    for key in citations:
+        if len(citations[key]) != 0:
+            references_list.append(citations[key])
+
+    return paperid_classid, classid_classname, reference_ids, references_list
+
+
+def read_cora_data_files():
+
+    # Set to store all referenced paper ids
+    reference_ids = set([])
+
+    # List to store referenced paper ids (dictionary storing hyperedges)
+    references_list = []
+
+    # Dictionary to store paper id to class id mapping
+    paperid_classid = {}
+
+    # Dictionary to store class id to class name mapping
+    classid_classname = {}
+
+    classname_classid = {}
+
+    cites_file_handle = open("/home/darwin/datasets/Cora/cora/cora.cites")
+
+    citations = {}
+    paperids = set([])
+
+    for line in cites_file_handle.readlines():
+        temp = line.split("\n")
+        link = temp[0].split("\t")
+
+        if link[1] not in citations:
+            citations[link[1]] = set([])
+            paperids.add(link[1])
+
+        if link[0] != link[1]:
+            citations[link[1]].add(link[0])
+            reference_ids.add(link[0])
+
+    content_file_handle = open("/home/darwin/datasets/Cora/cora/cora.content")
+
+    for line in content_file_handle.readlines():
+        temp = line.split("\n")
+        words = temp[0].split("\t")
+        paperid = words[0]
+        classname = words[-1]
+
+        if classname not in classname_classid:
+            classid = len(classname_classid)
+            classname_classid[classname] = classid
+            classid_classname[classid] = classname
+
+        classid = classname_classid[classname]
+
+        if paperid in paperids:
+            if paperid not in paperid_classid:
+                paperid_classid[paperid] = classid
+            else:
+                if paperid_classid[paperid] != classid:
+                    print("Error - same paper id belongs to two different classes")
+
+    for key in citations:
+        if len(citations[key]) != 0:
+            references_list.append(citations[key])
 
     return paperid_classid, classid_classname, reference_ids, references_list
 
@@ -104,13 +228,18 @@ def get_largest_cc(nodes, hyperedges):
     return largest_cc.nodes(), hyperedges
 
 
-def get_citation_network(files_paths, use_cc):
-    
-    paperid_classid, classid_classname, reference_ids, references_list = read_aminer_data_files(files_paths)
+def get_citation_network(dataset, use_cc):
+
+    if dataset == "aminer":
+        paperid_classid, classid_classname, reference_ids, references_list = read_aminer_data_files()
+    elif dataset == "citeseer":
+        paperid_classid, classid_classname, reference_ids, references_list = read_citseer_data_files()
+    elif dataset == "cora":
+        paperid_classid, classid_classname, reference_ids, references_list = read_cora_data_files()
 
     nodes, hyperedges = validate_hyperedges(paperid_classid.keys(), reference_ids, references_list)
 
-    if use_cc:
+    if use_cc == "True":
         nodes, hyperedges = get_largest_cc(nodes, hyperedges)
 
     print("Total number of nodes - " + str(len(nodes)))
@@ -127,6 +256,6 @@ def get_citation_network(files_paths, use_cc):
             classid_count[classid] += 1
 
     for classid in classid_count:
-        print("class - " + str(classid) + ", count - " + str(classid_count[classid]))
+        print("class - " + str(classid) + ", classname - " + str(classid_classname[classid]) + ", count - " + str(classid_count[classid]))
 
     return list(nodes), hyperedges, paperid_classid, classid_classname
