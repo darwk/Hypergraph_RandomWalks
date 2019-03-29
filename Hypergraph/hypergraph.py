@@ -57,4 +57,4 @@ def get_adj_matrices(nodes, hyperedges):
 
     adj_density = hypergraph_adj_matrix.getnnz()/(hypergraph_adj_matrix.shape[0]*hypergraph_adj_matrix.shape[1])
     print("Adjacency matrices density - " + str(adj_density))
-    return hypergraph_adj_matrix, graph_adj_matrix, index_map
+    return hypergraph_adj_matrix, graph_adj_matrix, incidence_matrix, index_map

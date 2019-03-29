@@ -75,7 +75,7 @@ def read_citseer_data_files():
 
     classname_classid = {}
 
-    cites_file_handle = open("/home/darwin/datasets/Citeseer/citeseer/citeseer.cites")
+    cites_file_handle = open("/home/darwin/Desktop/Hypergraph_Deepwalk/Datasets/Citeseer/citeseer/citeseer.cites")
 
     citations = {}
     paperids = set([])
@@ -92,7 +92,7 @@ def read_citseer_data_files():
             citations[link[1]].add(link[0])
             reference_ids.add(link[0])
 
-    content_file_handle = open("/home/darwin/datasets/Citeseer/citeseer/citeseer.content")
+    content_file_handle = open("/home/darwin/Desktop/Hypergraph_Deepwalk/Datasets/Citeseer/citeseer/citeseer.content")
 
     for line in content_file_handle.readlines():
         temp = line.split("\n")
@@ -137,7 +137,7 @@ def read_cora_data_files():
 
     classname_classid = {}
 
-    cites_file_handle = open("/home/darwin/datasets/Cora/cora/cora.cites")
+    cites_file_handle = open("/home/darwin/Desktop/Hypergraph_Deepwalk/Datasets/Cora/cora/cora.cites")
 
     citations = {}
     paperids = set([])
@@ -154,7 +154,7 @@ def read_cora_data_files():
             citations[link[1]].add(link[0])
             reference_ids.add(link[0])
 
-    content_file_handle = open("/home/darwin/datasets/Cora/cora/cora.content")
+    content_file_handle = open("/home/darwin/Desktop/Hypergraph_Deepwalk/Datasets/Cora/cora/cora.content")
 
     for line in content_file_handle.readlines():
         temp = line.split("\n")

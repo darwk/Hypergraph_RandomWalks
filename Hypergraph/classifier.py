@@ -76,6 +76,9 @@ def classifier():
     parser.add_argument("--test_size", nargs='+', type=float,
                         help="proportion  of the dataset to include in the test split")
 
+    parser.add_argument("--repetition_count", type=int,
+                        help="number of repetitions to perform")
+
     parser.add_argument("--output", type=str,
                         help="output folder path")
 
@@ -87,6 +90,7 @@ def classifier():
     test_size_list = args.test_size
     hypergraph_model_file = args.hypergraph_model_file
     graph_model_file = args.graph_model_file
+    repetition_count = args.repetition_count
     output_folder = args.output
 
     nodes, hyperedges, paperid_classid, classid_classname = get_citation_network(dataset, use_cc)
@@ -96,7 +100,6 @@ def classifier():
     graph_model = KeyedVectors.load_word2vec_format(graph_model_file)
     print("Successfully loaded models")
 
-    repitition_count = 10
     rand = random.Random(0)
     for test_size in test_size_list:
         hypergraph_micro_f1 = 0
@@ -107,7 +110,7 @@ def classifier():
         graph_macro_f1 = 0
         graph_weighted_f1 = 0
 
-        for i in range(repitition_count):
+        for i in range(repetition_count):
             rand.shuffle(nodes)
 
             target_classes = []
