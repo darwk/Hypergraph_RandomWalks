@@ -179,13 +179,13 @@ def classifier():
             write_matrix_to_disk(output_folder + "/confusion_matrices/" + classifier + "_graph_conf_matrix_" +
                                  str(test_size) + string2 + "_" + str(i) + ".csv", graph_conf_matrix, "%i")
 
-        hypergraph_micro_f1 = (hypergraph_micro_f1/repitition_count)
-        hypergraph_macro_f1 = (hypergraph_macro_f1/repitition_count)
-        hypergraph_weighted_f1 = (hypergraph_weighted_f1/repitition_count)
+        hypergraph_micro_f1 = (hypergraph_micro_f1/repetition_count)
+        hypergraph_macro_f1 = (hypergraph_macro_f1/repetition_count)
+        hypergraph_weighted_f1 = (hypergraph_weighted_f1/repetition_count)
 
-        graph_micro_f1 = (graph_micro_f1/repitition_count)
-        graph_macro_f1 = (graph_macro_f1/repitition_count)
-        graph_weighted_f1 = (graph_weighted_f1/repitition_count)
+        graph_micro_f1 = (graph_micro_f1/repetition_count)
+        graph_macro_f1 = (graph_macro_f1/repetition_count)
+        graph_weighted_f1 = (graph_weighted_f1/repetition_count)
 
         print("Writing the results to output file")
         csvfile = open(output_folder + "/Results_" + classifier + "_grid.csv", "a")
