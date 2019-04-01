@@ -5,6 +5,7 @@ import numpy as np
 
 from citation_network import get_citation_network
 from hypergraph import get_adj_matrices
+from movielens_network import get_movielens_network
 from walks import build_deepwalk_corpus
 from gensim.models import Word2Vec
 
@@ -21,8 +22,8 @@ def get_representations(nodes, adj_matrix, index_map, num_walks, walk_length, nu
 def main():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--dataset", type=str, choices=["aminer", "citeseer", "cora"],
-                        help="Dataset to be used - aminer or citeseer" or "cora")
+    parser.add_argument("--dataset", type=str, choices=["aminer", "citeseer", "cora", "movielens"],
+                        help="Dataset to be used - aminer or citeseer" or "cora" or "movielens")
 
     parser.add_argument("--num_walks", nargs='+', type=int,
                         help="number of random walks per node")
@@ -39,10 +40,10 @@ def main():
     parser.add_argument("--use_cc", type=str,
                         help="whether to use connected component or not")
 
-    parser.add_argument("--p", nargs='+', type=float,
+    parser.add_argument("--p", type=float,
                         help="parameter")
 
-    parser.add_argument("--q", nargs='+', type=float,
+    parser.add_argument("--q", type=float,
                         help="parameter")
 
     parser.add_argument("--output", type=str,
@@ -59,7 +60,10 @@ def main():
     q = args.q
     output_folder = args.output
 
-    nodes, hyperedges, paperid_classid, classid_classname = get_citation_network(dataset, use_cc)
+    if dataset == "movielens":
+        nodes, hyperedges, paperid_classid, classid_classname = get_movielens_network(use_cc)
+    else:
+        nodes, hyperedges, paperid_classid, classid_classname = get_citation_network(dataset, use_cc)
 
     hypergraph_adj_matrix, graph_adj_matrix, incidence_matrix, index_map = get_adj_matrices(nodes, hyperedges)
 

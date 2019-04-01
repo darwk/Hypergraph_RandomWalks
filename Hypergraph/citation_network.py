@@ -192,7 +192,7 @@ def validate_hyperedges(nodes, referenced_nodes, hyperedges):
     while i < len(hyperedges):
         hyperedge = hyperedges[i]
 
-        temp = hyperedge & common_nodes
+        temp = set(hyperedge) & common_nodes
 
         if len(temp) > 1:
             valid_nodes.update(temp)
