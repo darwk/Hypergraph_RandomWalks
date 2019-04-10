@@ -13,7 +13,7 @@ def read_movielens_data_files():
     genreid_genrename = {}
     genrename_genreid = {}
 
-    dataset_folder = "/scratch/scratch5/darwk/Datasets/movielens"
+    dataset_folder = "/home/darwin/Desktop/movielens"
 
     movies_file_handle = open(dataset_folder + "/movies.dat", encoding="ISO-8859-1")
     next(movies_file_handle)

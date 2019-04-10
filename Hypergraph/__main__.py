@@ -4,6 +4,7 @@ import scipy.sparse as sp
 import numpy as np
 
 from citation_network import get_citation_network
+from coreference_network import get_coreference_network
 from hypergraph import get_adj_matrices
 from movielens_network import get_movielens_network
 from walks import build_deepwalk_corpus
@@ -24,6 +25,9 @@ def main():
 
     parser.add_argument("--dataset", type=str, choices=["aminer", "citeseer", "cora", "movielens"],
                         help="Dataset to be used - aminer or citeseer" or "cora" or "movielens")
+
+    parser.add_argument("--network", type=str, choices=["cocitation", "coreference"],
+                        help="Network type to be fetched - cocitation or coreference")
 
     parser.add_argument("--num_walks", nargs='+', type=int,
                         help="number of random walks per node")
@@ -51,6 +55,7 @@ def main():
 
     args = parser.parse_args()
     dataset = args.dataset
+    network = args.network
     num_walks_list = args.num_walks
     walk_length_list = args.walk_length
     num_dimensions_list = args.num_dimensions
@@ -60,10 +65,13 @@ def main():
     q = args.q
     output_folder = args.output
 
-    if dataset == "movielens":
-        nodes, hyperedges, paperid_classid, classid_classname = get_movielens_network(use_cc)
-    else:
-        nodes, hyperedges, paperid_classid, classid_classname = get_citation_network(dataset, use_cc)
+    if network == "cocitation":
+        if dataset == "movielens":
+            nodes, hyperedges, paperid_classid, classid_classname = get_movielens_network(use_cc)
+        else:
+            nodes, hyperedges, paperid_classid, classid_classname = get_citation_network(dataset, use_cc)
+    elif network == "coreference":
+        nodes, hyperedges, paperid_classid, classid_classname = get_coreference_network(dataset, use_cc)
 
     hypergraph_adj_matrix, graph_adj_matrix, incidence_matrix, index_map = get_adj_matrices(nodes, hyperedges)
 
