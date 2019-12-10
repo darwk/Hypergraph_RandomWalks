@@ -19,9 +19,19 @@ def get_incidence_matrix(nodes, hyperedges):
     nodes_seen = 0
     index_map = {}
 
+    temp = set([])
     for hyperedge in hyperedges:
         for node in hyperedge:
+            temp.add(node)
+
+    print("Set size - " + str(len(temp)))
+
+    for hyperedge in hyperedges:
+        #print(hyperedge)
+        for node in hyperedge:
             node_id, nodes_seen = get_nodeid(index_map, node, nodes_seen)
+            #print(node_id)
+            #print(node)
             incidence_matrix[node_id, edges_seen] += 1
         edges_seen += 1
 

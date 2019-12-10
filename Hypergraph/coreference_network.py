@@ -1,5 +1,4 @@
 import networkx as nx
-import citation_network
 
 
 def get_file_paths(file):
@@ -64,6 +63,132 @@ def read_aminer_data_files():
     return paperid_classid, classid_classname, reference_ids, coreferences_list
 
 
+def read_citseer_data_files():
+
+    # Set to store all referenced paper ids
+    reference_ids = set([])
+
+    # List to store referenced paper ids (dictionary storing hyperedges)
+    coreferences_list = []
+
+    # Dictionary to store paper id to class id mapping
+    paperid_classid = {}
+
+    # Dictionary to store class id to class name mapping
+    classid_classname = {}
+
+    classname_classid = {}
+
+    cites_file_handle = open("/home/darwin/Desktop/Hypergraph_Deepwalk/Datasets/Citeseer/citeseer/citeseer.cites")
+
+    coreferences = {}
+    paperids = set([])
+
+    for line in cites_file_handle.readlines():
+        temp = line.split("\n")
+        link = temp[0].split("\t")
+
+        if link[0] not in coreferences:
+            coreferences[link[0]] = set([])
+
+        paperids.add(link[1])
+
+        if link[0] != link[1]:
+            coreferences[link[0]].add(link[1])
+            reference_ids.add(link[0])
+
+    content_file_handle = open("/home/darwin/Desktop/Hypergraph_Deepwalk/Datasets/Citeseer/citeseer/citeseer.content")
+
+    for line in content_file_handle.readlines():
+        temp = line.split("\n")
+        words = temp[0].split("\t")
+        paperid = words[0]
+        classname = words[-1]
+
+        if classname not in classname_classid:
+            classid = len(classname_classid)
+            classname_classid[classname] = classid
+            classid_classname[classid] = classname
+
+        classid = classname_classid[classname]
+
+        if paperid in paperids:
+            if paperid not in paperid_classid:
+                paperid_classid[paperid] = classid
+            else:
+                if paperid_classid[paperid] != classid:
+                    print("Error - same paper id belongs to two different classes")
+
+    for key in coreferences:
+        if len(coreferences[key]) != 0:
+            coreferences_list.append(coreferences[key])
+
+    return paperid_classid, classid_classname, reference_ids, coreferences_list
+
+
+def read_cora_data_files():
+
+    # Set to store all referenced paper ids
+    reference_ids = set([])
+
+    # List to store referenced paper ids (dictionary storing hyperedges)
+    coreferences_list = []
+
+    # Dictionary to store paper id to class id mapping
+    paperid_classid = {}
+
+    # Dictionary to store class id to class name mapping
+    classid_classname = {}
+
+    classname_classid = {}
+
+    cites_file_handle = open("/home/darwin/Desktop/Hypergraph_Deepwalk/Datasets/Cora/cora/cora.cites")
+
+    coreferences = {}
+    paperids = set([])
+
+    for line in cites_file_handle.readlines():
+        temp = line.split("\n")
+        link = temp[0].split("\t")
+
+        if link[0] not in coreferences:
+            coreferences[link[0]] = set([])
+
+        paperids.add(link[1])
+
+        if link[0] != link[1]:
+            coreferences[link[0]].add(link[1])
+            reference_ids.add(link[0])
+
+    content_file_handle = open("/home/darwin/Desktop/Hypergraph_Deepwalk/Datasets/Cora/cora/cora.content")
+
+    for line in content_file_handle.readlines():
+        temp = line.split("\n")
+        words = temp[0].split("\t")
+        paperid = words[0]
+        classname = words[-1]
+
+        if classname not in classname_classid:
+            classid = len(classname_classid)
+            classname_classid[classname] = classid
+            classid_classname[classid] = classname
+
+        classid = classname_classid[classname]
+
+        if paperid in paperids:
+            if paperid not in paperid_classid:
+                paperid_classid[paperid] = classid
+            else:
+                if paperid_classid[paperid] != classid:
+                    print("Error - same paper id belongs to two different classes")
+
+    for key in coreferences:
+        if len(coreferences[key]) != 0:
+            coreferences_list.append(coreferences[key])
+
+    return paperid_classid, classid_classname, reference_ids, coreferences_list
+
+
 def validate_hyperedges(nodes, referenced_nodes, hyperedges):
 
     common_nodes = nodes & referenced_nodes
@@ -96,13 +221,14 @@ def get_largest_cc(nodes, hyperedges):
 
     largest_cc = max(nx.connected_component_subgraphs(G), key=len)
 
-    while i < len(hyperedges):
-        hyperedge = hyperedges[i]
+    count = 0
+    while count < len(hyperedges):
+        hyperedge = hyperedges[count]
         temp = hyperedge & largest_cc.nodes()
 
         if len(temp) > 1:
-            hyperedges[i] = list(temp)
-            i += 1
+            hyperedges[count] = list(temp)
+            count += 1
         else:
             hyperedges.remove(hyperedge)
 
@@ -113,6 +239,10 @@ def get_coreference_network(dataset, use_cc):
 
     if dataset == "aminer":
         paperid_classid, classid_classname, reference_ids, coreferences_list = read_aminer_data_files()
+    elif dataset == "citeseer":
+        paperid_classid, classid_classname, reference_ids, coreferences_list = read_citseer_data_files()
+    elif dataset == "cora":
+        paperid_classid, classid_classname, reference_ids, coreferences_list = read_cora_data_files()
 
     nodes, hyperedges = validate_hyperedges(paperid_classid.keys(), reference_ids, coreferences_list)
 

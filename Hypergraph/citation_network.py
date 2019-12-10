@@ -215,6 +215,7 @@ def get_largest_cc(nodes, hyperedges):
 
     largest_cc = max(nx.connected_component_subgraphs(G), key=len)
 
+    i = 0
     while i < len(hyperedges):
         hyperedge = hyperedges[i]
         temp = hyperedge & largest_cc.nodes()

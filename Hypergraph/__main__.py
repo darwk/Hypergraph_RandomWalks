@@ -1,9 +1,13 @@
 import sys
 import argparse
+from locale import atoi
+
 import scipy.sparse as sp
 import numpy as np
+import matplotlib.pyplot as plt
 
 from citation_network import get_citation_network
+from collections import Counter
 from coreference_network import get_coreference_network
 from hypergraph import get_adj_matrices
 from movielens_network import get_movielens_network
@@ -66,18 +70,38 @@ def main():
     output_folder = args.output
 
     if network == "cocitation":
-        if dataset == "movielens":
-            nodes, hyperedges, paperid_classid, classid_classname = get_movielens_network(use_cc)
-        else:
-            nodes, hyperedges, paperid_classid, classid_classname = get_citation_network(dataset, use_cc)
+        nodes, hyperedges, paperid_classid, classid_classname = get_citation_network(dataset, use_cc)
     elif network == "coreference":
         nodes, hyperedges, paperid_classid, classid_classname = get_coreference_network(dataset, use_cc)
+
+    if dataset == "movielens":
+        nodes, hyperedges, paperid_classid, classid_classname = get_movielens_network(use_cc)
 
     hypergraph_adj_matrix, graph_adj_matrix, incidence_matrix, index_map = get_adj_matrices(nodes, hyperedges)
 
     node_degrees = np.squeeze(np.asarray(sp.csr_matrix.sum(incidence_matrix, axis=1)))
+    #edge_degrees = np.squeeze(np.asarray(sp.csr_matrix.sum(incidence_matrix, axis=0)))
 
-    print("Average node degree - " + str(np.sum(node_degrees)/len(node_degrees)))
+    #node_degrees_variance = np.var(node_degrees)
+   # edge_degrees_variance = np.var(edge_degrees)
+
+    #   frequency = Counter(edge_degrees)
+
+#    names, values = (list(t) for t in zip(*sorted(zip(list(frequency.keys()), list(frequency.values())))))
+#    names = [int(i) for i in names]
+
+#    plt.bar(range(len(frequency)), values, tick_label=names)
+#    plt.title(dataset + "-" + network + " network")
+#    plt.xlabel("edge degrees")
+#    plt.ylabel("no of edges")
+#    plt.tick_params(axis='x', which='major', labelsize=7)
+#    plt.savefig("Plots/" + str(dataset) + '_' + str(network) + '_edge_degrees.png')
+#    plt.show()
+
+#    print("Average node degree - " + str(np.sum(node_degrees) / len(node_degrees)))
+##    print("node degrees variance - " + str(node_degrees_variance))
+  #  print("Average edge degree - " + str(np.sum(edge_degrees)/len(edge_degrees)))
+ #   print("edge degrees variance - " + str(edge_degrees_variance))
 
     scaled_node_degrees = np.multiply(np.float_power(node_degrees, q), p)
     scaled_hypergraph_adj_matrix = hypergraph_adj_matrix.dot(sp.diags(scaled_node_degrees))
